@@ -3,6 +3,8 @@ For all of these scripts, the first time running them you will be prompted to co
 You will then login to your GSuite CFES administrator account and copy-paste a token into command line to give the script access.
 While doing this, you may be told it is unsafe because the application is unverified, but simply go to advanced and choose to proceed.
 
+These scripts must be run in the same directory as `util.js`, which handles the Google authentication.
+
 ## getStaleEmails.js
 This script will create `stale-emails-token.json` in the same directory so that future script runs do not need manual authorization.
 
