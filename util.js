@@ -46,7 +46,7 @@ function getNewToken(oauth2Client, callback) {
             if (err) return console.error('Error retrieving access token', err);
             oauth2Client.credentials = token;
             storeToken(token);
-            callback(oauth2Client);
+            callback(oauth2Client, [], ['member-link@cfes.ca'], 0); //some callbacks may not use all arguments
         });
     });
 }
