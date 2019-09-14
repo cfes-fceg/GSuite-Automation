@@ -12,8 +12,9 @@ const CUSTOMER_ID = "C02u6z7rd";
 const CURRENT_MS = new Date().getTime();
 const MS_TO_DAYS = 1000 * 60 * 60 * 24;
 const STALE_LOGIN_THRESHOLD_DAYS = 365;
+const CREDENTIALS_PATH = 'credentials.json';
 
-executor.execute(getStaleEmails, SCOPES, TOKEN_PATH);
+executor.execute(getStaleEmails, CREDENTIALS_PATH, SCOPES, TOKEN_PATH);
 
 function getStaleEmails(auth) {
     const service = google.admin({version: 'directory_v1', auth});

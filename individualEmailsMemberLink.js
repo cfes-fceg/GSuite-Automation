@@ -8,8 +8,13 @@ const SCOPES = ['https://www.googleapis.com/auth/admin.directory.group.member.re
     'https://www.googleapis.com/auth/admin.directory.group'];
 const TOKEN_PATH = 'individual-emails-token.json';
 const MEMBER_EMAILS_PATH = 'member-link_emails.csv';
+const CREDENTIALS_PATH = 'credentials.json';
 
-executor.execute(scrapeIndividualEmails, SCOPES, TOKEN_PATH);
+executor.execute(scraperCallback, CREDENTIALS_PATH, SCOPES, TOKEN_PATH);
+
+function scraperCallback(auth) {
+    scrapeIndividualEmails(auth, [], ['member-link@cfes.ca'], 0);
+}
 
 function scrapeIndividualEmails(auth, individualEmails, nestedGroupEmails, groupIdx) {
     const service = google.admin({version: 'directory_v1', auth});

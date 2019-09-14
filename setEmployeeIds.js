@@ -5,8 +5,9 @@ const SCOPES = ['https://www.googleapis.com/auth/admin.directory.user',
     'https://www.googleapis.com/auth/admin.directory.user.readonly'];
 const TOKEN_PATH = 'employee-ids-token.json';
 const CUSTOMER_ID = "C02u6z7rd";
+const CREDENTIALS_PATH = 'credentials.json';
 
-executor.execute(setEveryEmployeeId, SCOPES, TOKEN_PATH);
+executor.execute(setEveryEmployeeId, CREDENTIALS_PATH, SCOPES, TOKEN_PATH);
 
 function setEveryEmployeeId(auth) {
     const service = google.admin({version: 'directory_v1', auth});

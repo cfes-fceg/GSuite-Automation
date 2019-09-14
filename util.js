@@ -5,14 +5,14 @@ const {google} = require('googleapis');
 let scopes = [];
 let tokenPath = "";
 
-exports.execute = function (callback, requestedScopes, tokenPathGiven) {
+exports.execute = function (callback, credentialsPath, requestedScopes, tokenPathGiven) {
     scopes = requestedScopes;
     tokenPath = tokenPathGiven;
-    readCredentials(callback);
+    readCredentials(callback, credentialsPath);
 };
 
-function readCredentials(callback) {
-    fs.readFile('credentials.json', (err, content) => {
+function readCredentials(callback, credentialsPath) {
+    fs.readFile(credentialsPath, (err, content) => {
         if (err) return console.error('Error loading client secret file', err);
         authorize(JSON.parse(content), callback);
     });

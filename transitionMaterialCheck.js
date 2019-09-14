@@ -18,17 +18,18 @@ let SCOPES = [
     "https://www.googleapis.com/auth/drive.photos.readonly",
     "https://www.googleapis.com/auth/drive.readonly"
 ];
+const CREDENTIALS_PATH = 'drive-credentials.json';
 
 let transitionData = [];
 
-executor.execute(getAllTransitionData, SCOPES, TOKEN_PATH);
+executor.execute(getAllTransitionData, CREDENTIALS_PATH, SCOPES, TOKEN_PATH);
 
 function getAllTransitionData(auth) {
     let i = 0;
     let firstFolder = OFFICER_FOLDERS[0];
     getOneOfficerTransitionData(auth, firstFolder.folderName, firstFolder.folderId).then(function () {
         i++;
-        if (i < OFFICER_FOLDERS.length - 1) {
+        if (i < OFFICER_FOLDERS.length) {
             let folder = OFFICER_FOLDERS[i];
             getOneOfficerTransitionData(auth, folder.folderName, folder.folderId);
         } else {
@@ -41,8 +42,8 @@ function getAllTransitionData(auth) {
 
 function getOneOfficerTransitionData(auth, officerFolderName, officerFolderId) {
     return new Promise(function (resolve) {
-        const service = google.admin({version: 'directory_v1', auth});
-        service.drive.children.list({
+        const service = google.drive({version: 'v2', auth});
+        service.children.list({
             folderId: officerFolderId
         }, (err, res) => {
             if (err) return console.error('The API returned an error for ' + officerFolderName + ":", err.message);
