@@ -1,9 +1,9 @@
 const fs = require("fs");
-const executor = require("./util.js");
+const util = require("./util.js");
 const {google} = require('googleapis');
 
-const TRANSITION_DATA_PATH = "transition_data.csv";
-const TOKEN_PATH = 'transition-data-token.json';
+const TRANSITION_DATA_PATH = util.RESULTS_FOLDER + "transition_data.csv";
+const TOKEN_PATH = util.CREDENTIALS_FOLDER + 'transition-data-token.json';
 //if folders change in google chrome, the ID needs to change here
 const OFFICER_FOLDERS = [
     {folderName: "IT", folderId: "15GxtmJ5G3Y7bnf5z0PiRcNPLMcw_XX6X"},
@@ -22,7 +22,7 @@ const CREDENTIALS_PATH = 'drive-credentials.json';
 
 let transitionData = [];
 
-executor.execute(getAllTransitionData, CREDENTIALS_PATH, SCOPES, TOKEN_PATH);
+util.execute(getAllTransitionData, CREDENTIALS_PATH, SCOPES, TOKEN_PATH);
 
 function getAllTransitionData(auth) {
     let i = 0;

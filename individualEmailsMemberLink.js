@@ -1,16 +1,17 @@
 const fs = require('fs');
 const {google} = require('googleapis');
-const executor = require("./util.js");
+const util = require("./util.js");
+
+const TOKEN_PATH = util.CREDENTIALS_FOLDER + 'individual-emails-token.json';
+const MEMBER_EMAILS_PATH = util.RESULTS_FOLDER + 'member-link_emails.csv';
+const CREDENTIALS_PATH = util.CREDENTIALS_FOLDER + 'credentials.json';
 
 const SCOPES = ['https://www.googleapis.com/auth/admin.directory.group.member.readonly',
     'https://www.googleapis.com/auth/admin.directory.group.member',
     'https://www.googleapis.com/auth/admin.directory.group.readonly',
     'https://www.googleapis.com/auth/admin.directory.group'];
-const TOKEN_PATH = 'individual-emails-token.json';
-const MEMBER_EMAILS_PATH = 'member-link_emails.csv';
-const CREDENTIALS_PATH = 'credentials.json';
 
-executor.execute(scraperCallback, CREDENTIALS_PATH, SCOPES, TOKEN_PATH);
+util.execute(scraperCallback, CREDENTIALS_PATH, SCOPES, TOKEN_PATH);
 
 function scraperCallback(auth) {
     scrapeIndividualEmails(auth, [], ['member-link@cfes.ca'], 0);

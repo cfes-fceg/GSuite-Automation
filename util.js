@@ -2,6 +2,9 @@ const fs = require('fs');
 const readline = require('readline');
 const {google} = require('googleapis');
 
+exports.RESULTS_FOLDER = "./results/";
+exports.CREDENTIALS_FOLDER = "./credentials/";
+
 let scopes = [];
 let tokenPath = "";
 

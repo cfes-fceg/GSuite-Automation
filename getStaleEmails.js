@@ -1,20 +1,20 @@
 const fs = require('fs');
 const {google} = require('googleapis');
-const executor = require("./util.js");
+const util = require("./util.js");
 
 const SCOPES = ["https://www.googleapis.com/auth/admin.directory.user",
     "https://www.googleapis.com/auth/admin.directory.user.readonly"
 ];
-const TOKEN_PATH = 'stale-emails-token.json';
-const STALE_EMAILS_PATH = "stale-emails.txt";
+const TOKEN_PATH = util.CREDENTIALS_FOLDER + 'stale-emails-token.json';
+const STALE_EMAILS_PATH = util.RESULTS_FOLDER + "stale-emails.txt";
+const CREDENTIALS_PATH = util.CREDENTIALS_FOLDER + 'credentials.json';
 const CUSTOMER_ID = "C02u6z7rd";
 
 const CURRENT_MS = new Date().getTime();
 const MS_TO_DAYS = 1000 * 60 * 60 * 24;
 const STALE_LOGIN_THRESHOLD_DAYS = 365;
-const CREDENTIALS_PATH = 'credentials.json';
 
-executor.execute(getStaleEmails, CREDENTIALS_PATH, SCOPES, TOKEN_PATH);
+util.execute(getStaleEmails, CREDENTIALS_PATH, SCOPES, TOKEN_PATH);
 
 function getStaleEmails(auth) {
     const service = google.admin({version: 'directory_v1', auth});

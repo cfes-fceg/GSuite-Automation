@@ -1,6 +1,3 @@
 #credential files for G-Suite
-*.json
-
-stale-emails.txt
-
-member-link_emails.csv
+credentials/*
+results/*

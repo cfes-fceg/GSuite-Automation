@@ -1,13 +1,14 @@
 const {google} = require('googleapis');
-const executor = require("./util.js");
+const util = require("./util.js");
+
+const TOKEN_PATH = util.CREDENTIALS_FOLDER + 'employee-ids-token.json';
+const CREDENTIALS_PATH = util.CREDENTIALS_FOLDER + 'credentials.json';
+const CUSTOMER_ID = "C02u6z7rd";
 
 const SCOPES = ['https://www.googleapis.com/auth/admin.directory.user',
     'https://www.googleapis.com/auth/admin.directory.user.readonly'];
-const TOKEN_PATH = 'employee-ids-token.json';
-const CUSTOMER_ID = "C02u6z7rd";
-const CREDENTIALS_PATH = 'credentials.json';
 
-executor.execute(setEveryEmployeeId, CREDENTIALS_PATH, SCOPES, TOKEN_PATH);
+util.execute(setEveryEmployeeId, CREDENTIALS_PATH, SCOPES, TOKEN_PATH);
 
 function setEveryEmployeeId(auth) {
     const service = google.admin({version: 'directory_v1', auth});
