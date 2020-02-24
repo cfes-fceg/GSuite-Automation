@@ -1,0 +1,14 @@
+[
+  {
+    "description": "Get stale emails",
+    "script": "getStaleEmails.js"
+  },
+  {
+    "description": "Get member link emails",
+    "script": "individualEmailsMemberLink.js"
+  },
+  {
+    "description": "Set employee IDs",
+    "script": "setEmployeeIds.js"
+  }
+]

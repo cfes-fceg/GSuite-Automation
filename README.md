@@ -13,6 +13,18 @@ be downloaded from the [dashboard](https://console.developers.google.com/apis/cr
 Each script uses an appropriately named token file that will also appear in the `authentication` folder. Running the script without a token present
 will trigger the process mentioned above, with a URL to manually go to and a secret to be retrieved. After this, the token is saved and re-used.
 
+## Testing
+
+The `test` directory holds `testScripts.js` file, which runs each script present in the `test/tests.json` file.
+
+__NOTE: THESE ARE NOT ACTUAL TESTS. They simply run the scripts.__ So, if you want to ensure your changes didn't break anything,
+running this test file works well. However, any scripts that set data (e.g. `setEmployeeIds.js`) will actually set values.
+Make sure you set `tests.json` appropriately and are aware that scripts run in a live environment. In this case of `setEmployeeIds.js`,
+it is okay (in my opinion, at the time of writing), because it only sets the employee IDs to the email name, which is always the same
+and is *currently* the always desired behaviour.
+
+Mocha is used to test, so you can run the tests via mocha. For example, using the Webstorm mocha template run configuration.
+
 ## Debugging
 
 For any general error such as `invalid_grant` or `unauthorized_client`, the first step is to delete the token and re-try the script.
