@@ -1,23 +1,38 @@
 const fs = require('fs');
 const readline = require('readline');
 const {google} = require('googleapis');
+exports.gapi = google;
 
-exports.RESULTS_FOLDER = "./results/";
-exports.CREDENTIALS_FOLDER = "./credentials/";
+const RESULTS_FOLDER = "./results/";
+const AUTH_FOLDER = "./authentication/";
+const CREDENTIALS_FILE = "credentials.json";
 
 let scopes = [];
 let tokenPath = "";
 
-exports.execute = function (callback, credentialsPath, requestedScopes, tokenPathGiven) {
+exports.execute = async function (callback, requestedScopes, tokenFile) {
     scopes = requestedScopes;
-    tokenPath = tokenPathGiven;
-    readCredentials(callback, credentialsPath);
+    tokenPath = AUTH_FOLDER + tokenFile;
+    let credentials = await readCredentials();
+    authorize(credentials, callback);
 };
 
-function readCredentials(callback, credentialsPath) {
-    fs.readFile(credentialsPath, (err, content) => {
-        if (err) return console.error('Error loading client secret file', err);
-        authorize(JSON.parse(content), callback);
+exports.writeResults = async function (action, results, resultsFileName) {
+    return new Promise(function () {
+        const resultsPath = RESULTS_FOLDER + resultsFileName;
+        fs.writeFile(resultsPath, results, "utf-8", (err) => {
+            if (err) console.warn(`${action} not stored: ${err}`);
+            console.log(`${action} stored to ${resultsPath}`);
+        });
+    });
+};
+
+function readCredentials() {
+    return new Promise(function (resolve, reject) {
+        fs.readFile(AUTH_FOLDER + CREDENTIALS_FILE, (err, content) => {
+            if (err) reject(`Error loading credentials file: ${err}`);
+            resolve(JSON.parse(content.toString()));
+        });
     });
 }
 
@@ -25,7 +40,6 @@ function authorize(credentials, callback) {
     const {client_secret, client_id, redirect_uris} = credentials.installed;
     const oauth2Client = new google.auth.OAuth2(
         client_id, client_secret, redirect_uris[0]);
-    // Check if we have previously stored a token.
     fs.readFile(tokenPath, (err, token) => {
         if (err) return getNewToken(oauth2Client, callback);
         oauth2Client.credentials = JSON.parse(token);
@@ -49,7 +63,7 @@ function getNewToken(oauth2Client, callback) {
             if (err) return console.error('Error retrieving access token', err);
             oauth2Client.credentials = token;
             storeToken(token);
-            callback(oauth2Client, [], ['member-link@cfes.ca'], 0); //some callbacks may not use all arguments
+            callback(oauth2Client);
         });
     });
 }

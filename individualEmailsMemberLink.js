@@ -1,27 +1,25 @@
-const fs = require('fs');
-const {google} = require('googleapis');
 const util = require("./util.js");
 
-const TOKEN_PATH = util.CREDENTIALS_FOLDER + 'individual-emails-token.json';
-const MEMBER_EMAILS_PATH = util.RESULTS_FOLDER + 'member-link_emails.csv';
-const CREDENTIALS_PATH = util.CREDENTIALS_FOLDER + 'credentials.json';
+const TOKEN_FILE = 'individual-emails-token.json';
+const MEMBER_EMAILS_FILE = 'member-link_emails.csv';
 
 const SCOPES = ['https://www.googleapis.com/auth/admin.directory.group.member.readonly',
     'https://www.googleapis.com/auth/admin.directory.group.member',
     'https://www.googleapis.com/auth/admin.directory.group.readonly',
     'https://www.googleapis.com/auth/admin.directory.group'];
 
-util.execute(scraperCallback, CREDENTIALS_PATH, SCOPES, TOKEN_PATH);
+util.execute(scraperCallback, SCOPES, TOKEN_FILE);
 
 function scraperCallback(auth) {
     scrapeIndividualEmails(auth, [], ['member-link@cfes.ca'], 0);
 }
 
 function scrapeIndividualEmails(auth, individualEmails, nestedGroupEmails, groupIdx) {
-    const service = google.admin({version: 'directory_v1', auth});
+    const service = util.gapi.admin({version: 'directory_v1', auth});
     service.members.list({
         groupKey: nestedGroupEmails[groupIdx],
-    }, (err, res) => {
+    }, async (err, res) => {
+        //TODO dry
         if (err) return console.error('The API returned an error:', err.message);
         const members = res.data.members;
         for (let i = 0; i < members.length; i++) {
@@ -35,16 +33,7 @@ function scrapeIndividualEmails(auth, individualEmails, nestedGroupEmails, group
         if (groupIdx < nestedGroupEmails.length - 1) {
             scrapeIndividualEmails(auth, individualEmails, nestedGroupEmails, groupIdx + 1);
         } else {
-            exportEmails(individualEmails.join("\n"));
+            await util.writeResults("member-link emails", individualEmails.join("\n"), MEMBER_EMAILS_FILE);
         }
-    });
-}
-
-function exportEmails(emails) {
-    return new Promise(function () {
-        fs.writeFile(MEMBER_EMAILS_PATH, emails, 'utf-8', (err) => {
-            if (err) return console.warn("member-link emails not stored", err);
-            console.log("member-link emails stored to " + MEMBER_EMAILS_PATH);
-        });
     });
 }

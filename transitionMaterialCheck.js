@@ -1,9 +1,8 @@
-const fs = require("fs");
 const util = require("./util.js");
-const {google} = require('googleapis');
 
-const TRANSITION_DATA_PATH = util.RESULTS_FOLDER + "transition_data.csv";
-const TOKEN_PATH = util.CREDENTIALS_FOLDER + 'transition-data-token.json';
+const TRANSITION_DATA_FILE = "transition_data.csv";
+const TOKEN_FILE = 'transition-data-token.json';
+
 //if folders change in google chrome, the ID needs to change here
 const OFFICER_FOLDERS = [
     {folderName: "IT", folderId: "15GxtmJ5G3Y7bnf5z0PiRcNPLMcw_XX6X"},
@@ -18,11 +17,10 @@ let SCOPES = [
     "https://www.googleapis.com/auth/drive.photos.readonly",
     "https://www.googleapis.com/auth/drive.readonly"
 ];
-const CREDENTIALS_PATH = 'drive-credentials.json';
 
 let transitionData = [];
 
-util.execute(getAllTransitionData, CREDENTIALS_PATH, SCOPES, TOKEN_PATH);
+util.execute(getAllTransitionData, SCOPES, TOKEN_FILE);
 
 function getAllTransitionData(auth) {
     let i = 0;
@@ -33,7 +31,7 @@ function getAllTransitionData(auth) {
             let folder = OFFICER_FOLDERS[i];
             getOneOfficerTransitionData(auth, folder.folderName, folder.folderId);
         } else {
-            exportTransitionMaterialData(createCsvDataString());
+            util.writeResults("transition information", createCsvDataString(), TRANSITION_DATA_FILE);
         }
     }).catch(function (err) {
         console.log("ERROR: " + err)
@@ -42,11 +40,11 @@ function getAllTransitionData(auth) {
 
 function getOneOfficerTransitionData(auth, officerFolderName, officerFolderId) {
     return new Promise(function (resolve) {
-        const service = google.drive({version: 'v2', auth});
+        const service = util.gapi.drive({version: 'v2', auth});
         service.children.list({
             folderId: officerFolderId
         }, (err, res) => {
-            if (err) return console.error('The API returned an error for ' + officerFolderName + ":", err.message);
+            if (err) return console.error('The API returned an error for ' + officerFolderName + " folder:", err.message);
             console.log(res);
             let oneOfficerData = {officer: officerFolderName, itemCount: res.items.length};
             transitionData.push(oneOfficerData);
@@ -61,13 +59,4 @@ function createCsvDataString() {
         csvData += (data.officer + "," + data.itemCount + "\n");
     }
     return csvData;
-}
-
-function exportTransitionMaterialData(dataStr) {
-    return new Promise(function () {
-        fs.writeFile(TRANSITION_DATA_PATH, dataStr, "utf-8", (err) => {
-            if (err) return console.warn("stale emails not stored", err);
-            console.log("stale emails stored to " + TRANSITION_DATA_PATH);
-        });
-    });
 }

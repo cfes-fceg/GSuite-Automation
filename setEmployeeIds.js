@@ -1,17 +1,15 @@
-const {google} = require('googleapis');
 const util = require("./util.js");
 
-const TOKEN_PATH = util.CREDENTIALS_FOLDER + 'employee-ids-token.json';
-const CREDENTIALS_PATH = util.CREDENTIALS_FOLDER + 'credentials.json';
+const TOKEN_FILE = 'employee-ids-token.json';
 const CUSTOMER_ID = "C02u6z7rd";
 
 const SCOPES = ['https://www.googleapis.com/auth/admin.directory.user',
     'https://www.googleapis.com/auth/admin.directory.user.readonly'];
 
-util.execute(setEveryEmployeeId, CREDENTIALS_PATH, SCOPES, TOKEN_PATH);
+util.execute(setEveryEmployeeId, SCOPES, TOKEN_FILE);
 
 function setEveryEmployeeId(auth) {
-    const service = google.admin({version: 'directory_v1', auth});
+    const service = util.gapi.admin({version: 'directory_v1', auth});
     service.users.list({
         customer: CUSTOMER_ID
     }, (err, res) => {
@@ -27,7 +25,7 @@ function setEmployeeId(users, idx, auth) {
         } else {
             let userEmail = users[idx].primaryEmail;
             let id = userEmail.split("@")[0];
-            const service = google.admin({version: 'directory_v1', auth});
+            const service = util.gapi.admin({version: 'directory_v1', auth});
             service.users.update({
                 userKey: userEmail,
                 resource: {
